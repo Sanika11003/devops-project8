@@ -12,9 +12,9 @@ jobs:
     env:
       AWS_REGION: ap-south-1
       ECR_REPOSITORY: devops-project8
-      ECS_SERVICE: devops-project8-service     # 🚀 Verify this matches your ECS Service Name
-      ECS_CLUSTER: devops-project8-cluster     # 🚀 Verify this matches your ECS Cluster Name
-      CONTAINER_NAME: devops-project8          # 🚀 Matches your exact console container name
+      ECS_SERVICE: devops-project8-service     # Target ECS Service Name
+      ECS_CLUSTER: devops-project8-cluster     # Target ECS Cluster Name
+      CONTAINER_NAME: devops-project8          # Matches your console container name
 
     steps:
       - name: Checkout code
@@ -55,7 +55,8 @@ jobs:
 
       - name: Download active task definition from AWS ECS
         run: |
-          aws ecs describe-task-definition --task-definition ${{ env.ECS_SERVICE }} --query taskDefinition > task-definition.json
+          # 🟢 Fixed: Changed --task-definition family query to match your actual console name
+          aws ecs describe-task-definition --task-definition devops-project8-task --query taskDefinition > task-definition.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: render-task-def
