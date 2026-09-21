@@ -5,38 +5,32 @@ on:
     branches:
       - main
 
-permissions:
-  id-token: write
-  contents: read
-
-env:
-  AWS_REGION: ap-south-1
-  ECR_REPOSITORY: devops-project8
-  ECS_SERVICE: devops-project8-service
-  ECS_CLUSTER: devops-project8-cluster
-  CONTAINER_NAME: devops-project8
-
 jobs:
   build-push-deploy:
     runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: ap-south-1
+      ECR_REPOSITORY: devops-project8
+      ECS_SERVICE: devops-project8-service     # 🚀 Verify this matches your ECS Service Name
+      ECS_CLUSTER: devops-project8-cluster     # 🚀 Verify this matches your ECS Cluster Name
+      CONTAINER_NAME: devops-project8          # 🚀 Matches your exact console container name
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure AWS credentials (via OIDC Role)
+      - name: Configure AWS credentials (via Secure Secrets)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      # ==========================================
-      # BOTH ECR STAGES (BUILD & PUSH)
-      # ==========================================
       - name: Build Docker image
         run: |
           docker build -t ${{ env.ECR_REPOSITORY }}:${{ github.sha }} .
@@ -49,9 +43,6 @@ jobs:
           docker push $REGISTRY/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
           echo "image=$REGISTRY/${{ env.ECR_REPOSITORY }}:${{ github.sha }}" >> $GITHUB_OUTPUT
 
-      # ==========================================
-      # BOTH ECS STAGES (FETCH & SERVICE UPDATE)
-      # ==========================================
       - name: Download active task definition from AWS ECS
         run: |
           aws ecs describe-task-definition --task-definition ${{ env.ECS_SERVICE }} --query taskDefinition > task-definition.json
