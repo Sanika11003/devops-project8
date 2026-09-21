@@ -20,6 +20,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: maven
+
+      - name: Build Maven application (Generate Jar)
+        run: mvn clean package -DskipTests
+
       - name: Configure AWS credentials (via Secure Secrets)
         uses: aws-actions/configure-aws-credentials@v4
         with:
