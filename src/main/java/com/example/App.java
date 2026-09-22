@@ -13,6 +13,7 @@ public class App {
         
         server.createContext("/", exchange -> {
             String response = "Hello, this is devops project to automate ECS deployment!";
+	    String response = "This is updated application to check automation of ECS deployment!";
             exchange.sendResponseHeaders(200, response.length());
             OutputStream os = exchange.getResponseBody();
             os.write(response.getBytes());
