@@ -12,8 +12,8 @@ public class App {
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
         
         server.createContext("/", exchange -> {
-            String response = "Hello, this is devops project to automate ECS deployment!";
-	    String response = "This is updated application to check automation of ECS deployment!";
+            String response1 = "Hello, this is devops project to automate ECS deployment!";
+	    String response2 = "This is updated application to check automation of ECS deployment!";
             exchange.sendResponseHeaders(200, response.length());
             OutputStream os = exchange.getResponseBody();
             os.write(response.getBytes());
