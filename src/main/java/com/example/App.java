@@ -7,13 +7,14 @@ import java.net.InetSocketAddress;
 
 public class App {
     public static void main(String[] args) throws IOException {
-        // 🇮🇳 Updated to run on port 8082
         int port = 8082; 
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
         
         server.createContext("/", exchange -> {
-            String response1 = "Hello, this is devops project to automate ECS deployment!";
-	    String response2 = "This is updated application to check automation of ECS deployment!";
+            // 🟢 Fixed: Both lines combined seamlessly into a single variable name 'response'
+            String response = "Hello, this is devops project to automate ECS deployment!\n" +
+                             "This is updated application to check automation of ECS deployment!";
+                             
             exchange.sendResponseHeaders(200, response.length());
             OutputStream os = exchange.getResponseBody();
             os.write(response.getBytes());
